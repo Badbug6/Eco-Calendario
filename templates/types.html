@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Gestione Tipi di Rifiuto{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 text-light">Gestione Tipi di Rifiuto</h1>
+
+<div class="row">
+    <div class="col-md-7 mb-4">
+        <div class="card bg-dark text-light">
+            <div class="card-body">
+                <h5 class="card-title">Tipi di Rifiuto Esistenti</h5>
+                <ul class="list-group list-group-flush">
+                    {% for type in waste_types %}
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+                        <span>
+                            <span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: {{ colors[type['color_id']]['hex'] }};"></span>
+                            {{ type['name'] }} <!-- Questo era già corretto -->
+                        </span>
+                        <div>
+                            <a href="{{ url_for('types_edit', type_id=type['id']) }}" class="btn btn-sm btn-outline-warning me-2"><i class="bi bi-pencil-square"></i></a>
+                            <form action="{{ url_for('types_delete') }}" method="POST" class="d-inline mb-0" onsubmit="return confirm('Sei sicuro? Se elimini questo tipo, verranno eliminati anche tutti i promemoria del calendario associati!');">
+                                <input type="hidden" name="id" value="{{ type['id'] }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 mb-4">
+        <div class="card bg-dark text-light">
+            <div class="card-body">
+                <h5 class="card-title">Aggiungi Nuovo Tipo</h5>
+                <form action="{{ url_for('types_add') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome Tipo</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Colore Calendario</label>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="colorDropdown">
+                                Scegli un colore
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                {% for id, color in colors.items() %}
+                                <li><a class="dropdown-item" href="#" onclick="selectColor('{{ id }}', '{{ color.hex }}', '{{ color.name }}')">
+                                    <span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: {{ color.hex }};"></span>
+                                    {{ color.name }}
+                                </a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <input type="hidden" name="color_id" id="selectedColorId" value="1" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Aggiungi Tipo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function selectColor(id, hex, name) {
+    document.getElementById('selectedColorId').value = id;
+    const dropdownButton = document.getElementById('colorDropdown');
+    dropdownButton.innerHTML = `<span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: ${hex};"></span> ${name}`;
+}
+</script>
+{% endblock %}

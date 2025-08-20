@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Configura Calendario{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 text-light">Configura Calendario di Raccolta</h1>
+
+<!-- Card di input -->
+<div class="card bg-dark text-light mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Aggiungi un Promemoria</h5>
+        <form action="{{ url_for('index') }}" method="POST">
+            <div class="row g-3 align-items-end">
+                <div class="col-md">
+                    <label for="waste_type" class="form-label">Tipo di Rifiuto</label>
+                    <select class="form-select" id="waste_type" name="waste_type">
+                        {% for type in waste_types %}
+                        <!-- CORREZIONE QUI: Usa type['name'] per il valore e il testo -->
+                        <option value="{{ type['name'] }}">{{ type['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md">
+                    <label for="day" class="form-label">Giorno</label>
+                    <select class="form-select" id="day" name="day">
+                        {% for day in days_of_week %}
+                        <option>{{ day }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md">
+                    <label for="time" class="form-label">Orario (HH:MM)</label>
+                    <input type="time" class="form-control" id="time" name="time" required>
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" name="add_item" class="btn btn-primary w-100">Aggiungi</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Card della lista e del pulsante di sync -->
+<div class="card bg-dark text-light">
+    <div class="card-body">
+        <h5 class="card-title">Calendario da Sincronizzare</h5>
+        {% if not schedule %}
+        <p class="text-muted">Nessun promemoria aggiunto. Usa il modulo qui sopra per iniziare.</p>
+        {% else %}
+        <ul class="list-group list-group-flush">
+            {% for item in schedule %}
+            <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+                <span>♻️ Raccolta <strong>{{ item['waste_type'] }}</strong> - ogni <strong>{{ item['day_of_week'] }}</strong> alle <strong>{{ item['time_of_day'] }}</strong></span>
+                <div class="d-flex align-items-center">
+                    <a href="{{ url_for('edit_schedule', schedule_id=item['id']) }}" class="btn btn-sm btn-outline-warning me-2">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <form action="{{ url_for('index') }}" method="POST" class="d-inline mb-0">
+                        <button type="submit" name="remove_item" value="{{ item['id'] }}" class="btn btn-sm btn-outline-danger">X</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if schedule %}
+        <hr>
+        <div class="d-grid">
+            <form id="syncForm" action="{{ url_for('sync') }}" method="POST">
+                <button id="syncButton" type="submit" class="btn btn-success btn-lg w-100">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    <span class="button-text">Salva e Sincronizza su Google Calendar</span>
+                </button>
+            </form>
+        </div>
+        <small class="form-text text-muted mt-2 d-block">
+            Attenzione: la sincronizzazione cancellerà i vecchi eventi di raccolta e creerà quelli nuovi.
+        </small>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const syncForm = document.getElementById('syncForm');
+    const syncButton = document.getElementById('syncButton');
+    const spinner = syncButton.querySelector('.spinner-border');
+    const buttonText = syncButton.querySelector('.button-text');
+
+    if (syncForm) {
+        syncForm.addEventListener('submit', function() {
+            syncButton.disabled = true;
+            spinner.classList.remove('d-none');
+            buttonText.textContent = ' Sincronizzazione in corso...';
+        });
+    }
+</script>
+{% endblock %}

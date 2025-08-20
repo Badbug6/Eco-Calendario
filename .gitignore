@@ -5,6 +5,10 @@ __pycache__/
 
 # C extensions
 *.so
+credentials.json
+schedule.db
+test.pdf
+token.json
 
 # Distribution / packaging
 .Python

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Modifica Voce Dizionario{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 text-light">Modifica Voce del Dizionario</h1>
+
+<div class="card bg-dark text-light">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome Materiale</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ material_item['name'] }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="destination" class="form-label">Dove si butta?</label>
+                <input type="text" class="form-control" id="destination" name="destination" value="{{ material_item['destination'] }}" required>
+            </div>
+
+            <hr>
+            
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('dictionary') }}" class="btn btn-secondary me-2">Annulla</a>
+                <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

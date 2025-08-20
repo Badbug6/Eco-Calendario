@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Modifica Tipo di Rifiuto{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 text-light">Modifica Tipo di Rifiuto</h1>
+<div class="card bg-dark text-light">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome Tipo</label>
+                <input type="text" class="form-control" name="name" value="{{ type_item['name'] }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Colore Calendario</label>
+                <div class="dropdown">
+                    {% set current_color = colors[type_item['color_id']] %}
+                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="colorDropdown">
+                        <span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: {{ current_color.hex }};"></span>
+                        {{ current_color.name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        {% for id, color in colors.items() %}
+                        <li><a class="dropdown-item" href="#" onclick="selectColor('{{ id }}', '{{ color.hex }}', '{{ color.name }}')">
+                            <span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: {{ color.hex }};"></span>
+                            {{ color.name }}
+                        </a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <input type="hidden" name="color_id" id="selectedColorId" value="{{ type_item['color_id'] }}" required>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('types') }}" class="btn btn-secondary me-2">Annulla</a>
+                <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function selectColor(id, hex, name) {
+    document.getElementById('selectedColorId').value = id;
+    const dropdownButton = document.getElementById('colorDropdown');
+    dropdownButton.innerHTML = `<span class="d-inline-block rounded-circle me-2" style="width: 15px; height: 15px; background-color: ${hex};"></span> ${name}`;
+}
+</script>
+{% endblock %}

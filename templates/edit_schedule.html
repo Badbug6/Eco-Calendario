@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Modifica Promemoria{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 text-light">Modifica Promemoria</h1>
+
+<div class="card bg-dark text-light">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="waste_type" class="form-label">Tipo di Rifiuto</label>
+                <select class="form-select" id="waste_type" name="waste_type">
+                    {% for type in waste_types %}
+                        <!-- CORREZIONE QUI: Usa type['name'] per il valore, il testo e il confronto -->
+                        <option value="{{ type['name'] }}" {% if type['name'] == schedule_item['waste_type'] %}selected{% endif %}>
+                            {{ type['name'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="day" class="form-label">Giorno</label>
+                <select class="form-select" id="day" name="day">
+                    {% for day in days_of_week %}
+                        <option {% if day == schedule_item['day_of_week'] %}selected{% endif %}>{{ day }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="time" class="form-label">Orario (HH:MM)</label>
+                <input type="time" class="form-control" id="time" name="time" value="{{ schedule_item['time_of_day'] }}" required>
+            </div>
+
+            <hr>
+            
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary me-2">Annulla</a>
+                <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
